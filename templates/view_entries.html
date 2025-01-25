@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View Entries</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>All Entries</h1>
+
+    <!-- Display Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="flashes">
+        {% for category, message in messages %}
+          <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    {% if entries %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Place Name</th>
+                    <th>Location</th>
+                    <th>Time Begin</th>
+                    <th>Time End</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in entries %}
+                <tr>
+                    <td>{{ entry.place_name }}</td>
+                    <td>{{ entry.location }}</td>
+                    <td>{{ entry.time_begin.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>{{ entry.time_end.strftime('%Y-%m-%d %H:%M') }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No entries found.</p>
+    {% endif %}
+
+    <a href="{{ url_for('index') }}">Add New Entry</a>
+</body>
+</html>

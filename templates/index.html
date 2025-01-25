@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add New Entry</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Add New Entry</h1>
+
+    <!-- Display Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="flashes">
+        {% for category, message in messages %}
+          <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <form action="{{ url_for('add_entry') }}" method="POST">
+        <label for="time_begin">Time Begin:</label>
+        <input type="datetime-local" id="time_begin" name="time_begin" required>
+
+        <label for="time_end">Time End:</label>
+        <input type="datetime-local" id="time_end" name="time_end" required>
+
+        <label for="place_name">Place Name:</label>
+        <input type="text" id="place_name" name="place_name" placeholder="Enter place name" required>
+
+        <label for="location">Location:</label>
+        <input type="text" id="location" name="location" placeholder="Enter location" required>
+
+        <button type="submit">Add Entry</button>
+    </form>
+
+    <a href="{{ url_for('view_entries') }}">View All Entries</a>
+</body>
+</html>
