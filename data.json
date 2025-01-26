@@ -1,102 +1,102 @@
 {
     "graph": {
         "Jacob's House": {
-            "Adi's House": 3
+            "Adi's House": 16
         },
         "Adi's House": {
-            "Will's House": 3
+            "Will's House": 16
         },
         "Will's House": {
-            "123 Street": 3
+            "123 Street": 16
         },
         "123 Street": {
-            "Devil's Millhopper Geological State Park": 3
+            "Devil's Millhopper Geological State Park": 16
         },
         "Devil's Millhopper Geological State Park": {
-            "Kanapaha Botanical Gardens": 3
+            "Kanapaha Botanical Gardens": 16
         },
         "Harn Museum of Art": {
-            "Florida Museum of Natural History": 6
+            "Florida Museum of Natural History": 32
         },
         "Sweetwater Wetlands Park": {
-            "Split Rock Conservation Area": 3
+            "Split Rock Conservation Area": 16
         },
         "Dragonfly Sushi & Sake Company": {
-            "Hippodrome Theatre": 6
+            "Hippodrome Theatre": 32
         },
         "Opus Coffee - UF Health East Tower": {
-            "Plaza of The Americas": 3
+            "Plaza of The Americas": 16
         },
         "Paynes Prairie Preserve State Park": {
-            "Kanapaha Botanical Gardens": 3
+            "Kanapaha Botanical Gardens": 16
         },
         "Florida Museum of Natural History": {
-            "UF Bat Houses": 3
+            "UF Bat Houses": 16
         },
         "Harry's Seafood Bar & Grille": {
-            "The Swamp Restaurant": 3
+            "The Swamp Restaurant": 16
         },
         "The Swamp Restaurant": {
-            "Karma Cream": 3
+            "Karma Cream": 16
         }
     },
     "time_action_data": {
         "2025-01-01T05:37:00+00:00": {
-            "Jacob's House": 3
+            "Jacob's House": 16
         },
         "2025-01-02T06:36:00+00:00": {
-            "Adi's House": 3
+            "Adi's House": 16
         },
         "2025-01-04T06:36:00+00:00": {
-            "Will's House": 3
+            "Will's House": 16
         },
         "2025-01-28T07:23:00+00:00": {
-            "123 Street": 3
+            "123 Street": 16
         },
         "2025-01-28T08:52:00+00:00": {
-            "Devil's Millhopper Geological State Park": 3
+            "Devil's Millhopper Geological State Park": 16
         },
         "2025-01-16T00:40:00+00:00": {
-            "Devil's Millhopper Geological State Park": 3,
-            "Paynes Prairie Preserve State Park": 3
+            "Devil's Millhopper Geological State Park": 16,
+            "Paynes Prairie Preserve State Park": 16
         },
         "2025-01-16T04:00:00+00:00": {
-            "Kanapaha Botanical Gardens": 6
+            "Kanapaha Botanical Gardens": 32
         },
         "2025-01-16T09:33:20+00:00": {
-            "Harn Museum of Art": 6
+            "Harn Museum of Art": 32
         },
         "2025-01-16T15:06:40+00:00": {
-            "Florida Museum of Natural History": 6
+            "Florida Museum of Natural History": 32
         },
         "2025-01-16T20:40:00+00:00": {
-            "Sweetwater Wetlands Park": 3,
-            "Dragonfly Sushi & Sake Company": 3
+            "Sweetwater Wetlands Park": 16,
+            "Dragonfly Sushi & Sake Company": 16
         },
         "2025-01-17T02:13:20+00:00": {
-            "Split Rock Conservation Area": 3,
-            "Hippodrome Theatre": 3
+            "Split Rock Conservation Area": 16,
+            "Hippodrome Theatre": 16
         },
         "2025-01-17T07:46:40+00:00": {
-            "Dragonfly Sushi & Sake Company": 3,
-            "Florida Museum of Natural History": 3
+            "Dragonfly Sushi & Sake Company": 16,
+            "Florida Museum of Natural History": 16
         },
         "2025-01-17T13:20:00+00:00": {
-            "Hippodrome Theatre": 3,
-            "UF Bat Houses": 3
+            "Hippodrome Theatre": 16,
+            "UF Bat Houses": 16
         },
         "2025-01-17T18:53:20+00:00": {
-            "Opus Coffee - UF Health East Tower": 3,
-            "Harry's Seafood Bar & Grille": 3
+            "Opus Coffee - UF Health East Tower": 16,
+            "Harry's Seafood Bar & Grille": 16
         },
         "2025-01-17T21:40:00+00:00": {
-            "Plaza of The Americas": 3
+            "Plaza of The Americas": 16
         },
         "2025-01-18T00:26:40+00:00": {
-            "The Swamp Restaurant": 3
+            "The Swamp Restaurant": 16
         },
         "2025-01-18T06:00:00+00:00": {
-            "Karma Cream": 3
+            "Karma Cream": 16
         }
     }
 }

@@ -269,7 +269,61 @@ def view_map_entries():
             "error": str(e)
         }), 500
 
+@app.route('/api/itineraries/<itinerary_id>')
+def get_single_itinerary(itinerary_id):
+    try:
+        # Validate ID format first
+        if not ObjectId.is_valid(itinerary_id):
+            return jsonify({"success": False, "error": "Invalid ID format"}), 400
 
+        # Find the itinerary
+        itinerary = itineraries_collection.find_one({'_id': ObjectId(itinerary_id)})
+        if not itinerary:
+            return jsonify({"success": False, "error": "Itinerary not found"}), 404
+
+        # Convert BSON to Python dict
+        itinerary = json_util.loads(json_util.dumps(itinerary))
+        
+        # Safely process entries
+        entries = itinerary.get('entries', [])
+        processed_entries = []
+        
+        for entry in entries:
+            # Create a copy to avoid modifying original document
+            processed_entry = entry.copy()
+            
+            # Safely handle time_start
+            time_start = entry.get('time_start')
+            if isinstance(time_start, dict) and '$date' in time_start:
+                processed_entry['time_start'] = datetime.fromisoformat(time_start['$date'])
+            elif isinstance(time_start, datetime):
+                processed_entry['time_start'] = time_start
+            else:
+                processed_entry['time_start'] = datetime.utcnow()
+            
+            # Safely handle time_end
+            time_end = entry.get('time_end')
+            if isinstance(time_end, dict) and '$date' in time_end:
+                processed_entry['time_end'] = datetime.fromisoformat(time_end['$date'])
+            elif isinstance(time_end, datetime):
+                processed_entry['time_end'] = time_end
+            else:
+                processed_entry['time_end'] = datetime.utcnow()
+            
+            # Convert to ISO format
+            processed_entry['time_start'] = processed_entry['time_start'].isoformat()
+            processed_entry['time_end'] = processed_entry['time_end'].isoformat()
+            
+            processed_entries.append(processed_entry)
+
+        itinerary['entries'] = processed_entries
+        itinerary['_id'] = str(itinerary['_id'])
+        
+        return jsonify({"success": True, "data": itinerary})
+
+    except Exception as e:
+        logger.error(f"Error processing itinerary: {str(e)}")
+        return jsonify({"success": False, "error": "Internal server error"}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

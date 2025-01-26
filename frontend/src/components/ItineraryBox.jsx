@@ -12,7 +12,7 @@ const ItineraryBox = ({ id, image, title, avatar }) => {
       </div>
 
       {/* Avatar */}
-      <div className="absolute bottom-2 right-2 bg-purple-300 rounded-full border-2 border-gray-800">
+      <div className="absolute bottom-6 right-2 bg-purple-300 rounded-full border-2 border-gray-800">
         <img src={avatar} alt="User Avatar" className="w-10 h-10 rounded-full" />
       </div>
     </Link>

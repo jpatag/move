@@ -2,109 +2,50 @@ import React, { useState, useEffect } from "react";
 import ItineraryBox from "./components/ItineraryBox";
 import DropdownMenu from "./components/DropdownMenu";
 
-const dummyData = [
+const placeHolder = 
   {
-    id: 1,
     image: "https://www.newegg.com/insider/wp-content/uploads/windows_xp_bliss-wide.jpg",
-    title: "Itinerary Title",
-    avatar: "https://i.pravatar.cc/50?img=1"
-  },
-  {
-    id: 2,
-    image: "https://www.newegg.com/insider/wp-content/uploads/windows_xp_bliss-wide.jpg",
-    title: "Itinerary Title",
-    avatar: "https://i.pravatar.cc/50?img=2"
-  },
-  {
-    id: 3,
-    image: "https://www.newegg.com/insider/wp-content/uploads/windows_xp_bliss-wide.jpg",
-    title: "Itinerary Title",
-    avatar: "https://i.pravatar.cc/50?img=3"
-  },
-  {
-    id: 4,
-    image: "https://www.newegg.com/insider/wp-content/uploads/windows_xp_bliss-wide.jpg",
-    title: "Itinerary Title",
-    avatar: "https://i.pravatar.cc/50?img=4"
-  },
-  {
-    id: 5,
-    image: "https://www.newegg.com/insider/wp-content/uploads/windows_xp_bliss-wide.jpg",
-    title: "Itinerary Title",
-    avatar: "https://i.pravatar.cc/50?img=5"
-  },
-  {
-    id: 6,
-    image: "https://www.newegg.com/insider/wp-content/uploads/windows_xp_bliss-wide.jpg",
-    title: "Itinerary Title",
-    avatar: "https://i.pravatar.cc/50?img=6"
-  },
-  {
-    id: 1,
-    image: "https://www.newegg.com/insider/wp-content/uploads/windows_xp_bliss-wide.jpg",
-    title: "Itinerary Title",
-    avatar: "https://i.pravatar.cc/50?img=1"
-  },
-  {
-    id: 2,
-    image: "https://www.newegg.com/insider/wp-content/uploads/windows_xp_bliss-wide.jpg",
-    title: "Itinerary Title",
-    avatar: "https://i.pravatar.cc/50?img=2"
-  },
-  {
-    id: 3,
-    image: "https://www.newegg.com/insider/wp-content/uploads/windows_xp_bliss-wide.jpg",
-    title: "Itinerary Title",
-    avatar: "https://i.pravatar.cc/50?img=3"
-  },
-  {
-    id: 4,
-    image: "https://www.newegg.com/insider/wp-content/uploads/windows_xp_bliss-wide.jpg",
-    title: "Itinerary Title",
-    avatar: "https://i.pravatar.cc/50?img=4"
-  },
-  {
-    id: 5,
-    image: "https://www.newegg.com/insider/wp-content/uploads/windows_xp_bliss-wide.jpg",
-    title: "Itinerary Title",
-    avatar: "https://i.pravatar.cc/50?img=5"
-  },
-  {
-    id: 6,
-    image: "https://www.newegg.com/insider/wp-content/uploads/windows_xp_bliss-wide.jpg",
-    title: "Itinerary Title",
-    avatar: "https://i.pravatar.cc/50?img=6"
-  }
-];
+    avatar: "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
+  };
 
 
 
 
-// function Explore() {
-//   const [itineraries, setItineraries] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState(null);
+function Explore() {
+  const [itineraries, setItineraries] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-//   useEffect(() => {
-//     const fetchItineraries = async () => {
-//       try {
-//         const response = await fetch('/api/itineraries');
-//         if (!response.ok) throw new Error('Failed to fetch itineraries');
-//         const data = await response.json();
+  useEffect(() => {
+    const fetchItineraries = async () => {
+      try {
+        console.log('Starting fetch...');
+        const response = await fetch('http://localhost:5000/api/itineraries'); // Use full URL for debugging
         
-//         if (data.success) {
-//           setItineraries(data.data);
-//         }
-//       } catch (err) {
-//         setError(err.message);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
+        console.log('Response status:', response.status);
+        const data = await response.json();
+        console.log('API Response:', data);
+        
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to fetch itineraries');
+        }
 
-//     fetchItineraries();
-//     console.log(itineraries)
-//   }, []);
+        if (data.success) {
+          console.log('Received data:', data.data);
+          setItineraries(data.data);
+        } else {
+          throw new Error(data.error || 'API request failed');
+        }
+      } catch (err) {
+        console.error('Fetch error:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchItineraries();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-800 text-white p-4">
@@ -121,8 +62,8 @@ const dummyData = [
 
      {/* Itinerary Grid */}
       <div className="flex flex-wrap justify-center gap-4 mt-4">
-        {dummyData.map((item) => (
-          <ItineraryBox key={item.id} id={item.id} image={item.image} title={item.title} avatar={item.avatar} />
+        {itineraries.map((item) => (
+          <ItineraryBox key={item.user_id} id={item.id} image={placeHolder.image} title={item.itinerary_name} avatar={placeHolder.avatar}/>
         ))}
       </div>
     </div>
