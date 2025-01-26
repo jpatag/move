@@ -1,46 +1,102 @@
 {
     "graph": {
+        "Jacob's House": {
+            "Adi's House": 3
+        },
         "Adi's House": {
-            "Newell": 7
+            "Will's House": 3
         },
-        "Newell": {
-            "Penis": 7
+        "Will's House": {
+            "123 Street": 3
         },
-        "Penis": {
-            "Lebron": 7,
-            "But": 5
+        "123 Street": {
+            "Devil's Millhopper Geological State Park": 3
         },
-        "Lebron": {
-            "ok": 3
+        "Devil's Millhopper Geological State Park": {
+            "Kanapaha Botanical Gardens": 3
         },
-        "ok": {
-            "Curry": 1
+        "Harn Museum of Art": {
+            "Florida Museum of Natural History": 6
+        },
+        "Sweetwater Wetlands Park": {
+            "Split Rock Conservation Area": 3
+        },
+        "Dragonfly Sushi & Sake Company": {
+            "Hippodrome Theatre": 6
+        },
+        "Opus Coffee - UF Health East Tower": {
+            "Plaza of The Americas": 3
+        },
+        "Paynes Prairie Preserve State Park": {
+            "Kanapaha Botanical Gardens": 3
+        },
+        "Florida Museum of Natural History": {
+            "UF Bat Houses": 3
+        },
+        "Harry's Seafood Bar & Grille": {
+            "The Swamp Restaurant": 3
+        },
+        "The Swamp Restaurant": {
+            "Karma Cream": 3
         }
     },
     "time_action_data": {
-        "2025-01-01T02:22:00+00:00": {
-            "Adi's House": 7
+        "2025-01-01T05:37:00+00:00": {
+            "Jacob's House": 3
         },
-        "2025-02-01T02:25:00+00:00": {
-            "Newell": 7
+        "2025-01-02T06:36:00+00:00": {
+            "Adi's House": 3
         },
-        "2025-02-18T02:27:00+00:00": {
-            "Penis": 7
+        "2025-01-04T06:36:00+00:00": {
+            "Will's House": 3
         },
-        "2025-03-01T02:39:00+00:00": {
-            "Lebron": 7
+        "2025-01-28T07:23:00+00:00": {
+            "123 Street": 3
         },
-        "2025-01-15T02:40:00+00:00": {
-            "Penis": 5
+        "2025-01-28T08:52:00+00:00": {
+            "Devil's Millhopper Geological State Park": 3
         },
-        "2025-06-18T03:44:00+00:00": {
-            "But": 5
+        "2025-01-16T00:40:00+00:00": {
+            "Devil's Millhopper Geological State Park": 3,
+            "Paynes Prairie Preserve State Park": 3
         },
-        "2025-03-18T03:02:00+00:00": {
-            "ok": 3
+        "2025-01-16T04:00:00+00:00": {
+            "Kanapaha Botanical Gardens": 6
         },
-        "2025-07-07T03:08:00+00:00": {
-            "Curry": 1
+        "2025-01-16T09:33:20+00:00": {
+            "Harn Museum of Art": 6
+        },
+        "2025-01-16T15:06:40+00:00": {
+            "Florida Museum of Natural History": 6
+        },
+        "2025-01-16T20:40:00+00:00": {
+            "Sweetwater Wetlands Park": 3,
+            "Dragonfly Sushi & Sake Company": 3
+        },
+        "2025-01-17T02:13:20+00:00": {
+            "Split Rock Conservation Area": 3,
+            "Hippodrome Theatre": 3
+        },
+        "2025-01-17T07:46:40+00:00": {
+            "Dragonfly Sushi & Sake Company": 3,
+            "Florida Museum of Natural History": 3
+        },
+        "2025-01-17T13:20:00+00:00": {
+            "Hippodrome Theatre": 3,
+            "UF Bat Houses": 3
+        },
+        "2025-01-17T18:53:20+00:00": {
+            "Opus Coffee - UF Health East Tower": 3,
+            "Harry's Seafood Bar & Grille": 3
+        },
+        "2025-01-17T21:40:00+00:00": {
+            "Plaza of The Americas": 3
+        },
+        "2025-01-18T00:26:40+00:00": {
+            "The Swamp Restaurant": 3
+        },
+        "2025-01-18T06:00:00+00:00": {
+            "Karma Cream": 3
         }
     }
 }
