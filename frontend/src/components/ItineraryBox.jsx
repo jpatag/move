@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 const ItineraryBox = ({ id, image, title, avatar }) => {
   return (
-    <Link to={`/itinerary/${id}`} className="relative bg-gray-700 rounded-lg overflow-hidden shadow-lg w-48 h-36 block animation-fade">
+    <Link to={`/itinerary/${id}`} className="relative bg-gray-700 rounded-lg overflow-hidden shadow-lg w-48 h-36 block animate-fadeIn">
       {/* Background Image */}
       <img src={image} alt="Itinerary" className="w-full h-full object-cover" />
 

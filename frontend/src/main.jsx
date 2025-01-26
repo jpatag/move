@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./index.css";
 import App from "./App.jsx";
 import Explore from "./Explore.jsx";
+import ItineraryPage from "./components/ItineraryPage.jsx"; 
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -11,6 +12,7 @@ createRoot(document.getElementById("root")).render(
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/explore" element={<Explore />} />
+        <Route path="/itinerary/:id" element={<ItineraryPage />} />
       </Routes>
     </Router>
   </StrictMode>
