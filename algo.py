@@ -26,6 +26,22 @@ folder = os.path.dirname(file_path)
 if not os.path.exists(folder) and folder != '.':
     os.makedirs(folder)
 
+def convert_mongodb_date(value):
+    """
+    Converts MongoDB extended JSON date format ({"$date": {"$numberLong": "..."}})
+    to a UTC-aware datetime object.
+    """
+    if isinstance(value, dict) and "$date" in value:
+        # Handle extended JSON format (e.g., {"$date": {"$numberLong": "1737060000000"}})
+        date_data = value["$date"]
+        if "$numberLong" in date_data:
+            timestamp_ms = int(date_data["$numberLong"])
+            return datetime.fromtimestamp(timestamp_ms / 1000, tz=timezone.utc)
+    elif isinstance(value, datetime):
+        # Already a datetime object (ensure it's UTC)
+        return value.astimezone(timezone.utc)
+    return None
+
 def save_data(graph, time_action_data, file_path):
     """
     Save the graph and time-action data to a JSON file.
@@ -208,7 +224,32 @@ def connect_to_mongodb(uri, db_name, collection_name):
 # Fetch itineraries from MongoDB
 def fetch_itineraries_from_mongodb(collection):
     try:
-        itineraries = list(collection.find({}))  # Fetch all documents in the collection
+        # Fetch all documents and convert dates
+        itineraries = []
+        for doc in collection.find({}):
+            entries = doc.get("entries", [])
+            valid_entries = []
+            for entry in entries:
+                # Convert time_start
+                time_start = entry.get("time_start")
+                parsed_time_start = convert_mongodb_date(time_start)
+                if not parsed_time_start:
+                    print(f"Skipping entry with invalid time_start: {entry}")
+                    continue
+
+                # Convert time_end (optional)
+                time_end = entry.get("time_end")
+                parsed_time_end = convert_mongodb_date(time_end) if time_end else None
+
+                # Update entry with parsed datetimes
+                entry["time_start"] = parsed_time_start
+                entry["time_end"] = parsed_time_end
+                valid_entries.append(entry)
+
+            # Update the document with valid entries
+            doc["entries"] = valid_entries
+            itineraries.append(doc)
+
         print(f"Fetched {len(itineraries)} itineraries from MongoDB.")
         return itineraries
     except PyMongoError as e:

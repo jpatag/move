@@ -28,7 +28,7 @@ app.secret_key = os.getenv('SECRET_KEY', 'default_secret_key')
 
 # Configure Logging
 logging.basicConfig(level=logging.WARNING)
-#logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 # MongoDB configuration
 MONGO_URI = os.getenv('MONGO_URI')
