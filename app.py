@@ -273,59 +273,69 @@ def view_map_entries():
 @app.route('/api/itineraries/<itinerary_id>')
 def get_single_itinerary(itinerary_id):
     try:
-        # Validate ID format first
         if not ObjectId.is_valid(itinerary_id):
             return jsonify({"success": False, "error": "Invalid ID format"}), 400
 
-        # Find the itinerary
+        # Fetch itinerary
         itinerary = itineraries_collection.find_one({'_id': ObjectId(itinerary_id)})
         if not itinerary:
             return jsonify({"success": False, "error": "Itinerary not found"}), 404
 
-        # Convert BSON to Python dict
         itinerary = json_util.loads(json_util.dumps(itinerary))
-        
-        # Safely process entries
         entries = itinerary.get('entries', [])
         processed_entries = []
-        
+
+        # Batch process locations using map_entries_collection
+        location_names = [entry.get('location_name') for entry in entries]
+        map_entries = list(map_entries_collection.find({
+            "location": {"$in": location_names}
+        }))
+
+        # Create location->image mapping from map_entries
+        location_image_map = {
+            entry['location']: entry.get('image', 'https://www.newegg.com/insider/wp-content/uploads/windows_xp_bliss-wide.jpg')
+            for entry in map_entries
+        }
+
         for entry in entries:
-            # Create a copy to avoid modifying original document
             processed_entry = entry.copy()
+            location_name = entry.get('location_name', '')
             
-            # Safely handle time_start
+            # Add image URL from map_entries
+            processed_entry['image'] = location_image_map.get(
+                location_name,
+                'https://www.newegg.com/insider/wp-content/uploads/windows_xp_bliss-wide.jpg'
+            )
+
+            # Existing date processing
             time_start = entry.get('time_start')
             if isinstance(time_start, dict) and '$date' in time_start:
-                processed_entry['time_start'] = datetime.fromisoformat(time_start['$date'])
-            elif isinstance(time_start, datetime):
-                processed_entry['time_start'] = time_start
+                processed_entry['time_start'] = datetime.fromisoformat(time_start['$date'].rstrip('Z')).isoformat()
             else:
-                processed_entry['time_start'] = datetime.utcnow()
-            
-            # Safely handle time_end
+                processed_entry['time_start'] = datetime.utcnow().isoformat()
+
             time_end = entry.get('time_end')
             if isinstance(time_end, dict) and '$date' in time_end:
-                processed_entry['time_end'] = datetime.fromisoformat(time_end['$date'])
-            elif isinstance(time_end, datetime):
-                processed_entry['time_end'] = time_end
+                processed_entry['time_end'] = datetime.fromisoformat(time_end['$date'].rstrip('Z')).isoformat()
             else:
-                processed_entry['time_end'] = datetime.utcnow()
-            
-            # Convert to ISO format
-            processed_entry['time_start'] = processed_entry['time_start'].isoformat()
-            processed_entry['time_end'] = processed_entry['time_end'].isoformat()
-            
+                processed_entry['time_end'] = datetime.utcnow().isoformat()
+
             processed_entries.append(processed_entry)
 
-        itinerary['entries'] = processed_entries
-        itinerary['_id'] = str(itinerary['_id'])
-        
-        return jsonify({"success": True, "data": itinerary})
+        return jsonify({
+            "success": True,
+            "data": {
+                "_id": str(itinerary['_id']),
+                "itinerary_name": itinerary.get('itinerary_name', 'Unnamed Itinerary'),
+                "user_id": itinerary.get('user_id', 'Unknown'),
+                "notes": itinerary.get('notes', ''),
+                "entries": processed_entries
+            }
+        })
 
     except Exception as e:
         logger.error(f"Error processing itinerary: {str(e)}")
         return jsonify({"success": False, "error": "Internal server error"}), 500
-
 
 @app.route('/api/recommend-next', methods=['GET'])
 def recommend_next_location():

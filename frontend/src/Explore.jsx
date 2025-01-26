@@ -16,25 +16,35 @@ function Explore() {
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [recommendation, setRecommendation] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [showSearch, setShowSearch] = useState(false);
   const [loading, setLoading] = useState({
     main: true,
     suggestions: false,
     recommendation: false
   });
   const [error, setError] = useState(null);
+  const [showSearch, setShowSearch] = useState(false);
+  const [locationImageMap, setLocationImageMap] = useState({});
 
+  const getItineraryImage = (itinerary) => {
+    if (!itinerary.entries || itinerary.entries.length === 0) {
+      return placeHolder.image;
+    }
+
+
+    const firstLocation = itinerary.entries[0]?.location_name?.toLowerCase() || '';
+    return locationImageMap[firstLocation] || placeHolder.image;
+  };
   // Filter itineraries based on search query
   const filteredItineraries = itineraries
-    .filter(itinerary =>
-      itinerary.itinerary_name.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-    // Add deduplication logic
-    .filter((itinerary, index, self) =>
-      index === self.findIndex((t) => (
-        t._id === itinerary._id
-      ))
-    );
+  .filter(itinerary =>
+    itinerary.itinerary_name.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+  .filter((itinerary, index, self) =>
+    index === self.findIndex((t) => t._id === itinerary._id)
+  );
+
+  
+
   // Fetch suggestions when user types
   useEffect(() => {
     const fetchSuggestions = async () => {
@@ -88,16 +98,28 @@ function Explore() {
   useEffect(() => {
     const fetchMainData = async () => {
       try {
-        const [itinerariesRes, actionRes] = await Promise.all([
+        const [itinerariesRes, actionRes, mapEntriesRes] = await Promise.all([
           fetch('http://localhost:5000/api/itineraries'),
-          fetch(`http://localhost:5000/api/common-action?time=${new Date().toISOString()}`)
+          fetch(`http://localhost:5000/api/common-action?time=${new Date().toISOString()}`),
+          fetch('http://localhost:5000/api/map_entries')
         ]);
 
         const itinerariesData = await itinerariesRes.json();
         const actionData = await actionRes.json();
+        const mapEntriesData = await mapEntriesRes.json();
+
+        // Create location-image mapping
+        if (mapEntriesData.success) {
+          const imageMap = {};
+          mapEntriesData.data.forEach(entry => {
+            imageMap[entry.location.toLowerCase()] = entry.image || placeHolder.image;
+          });
+          setLocationImageMap(imageMap);
+        }
 
         if (itinerariesData.success) setItineraries(itinerariesData.data);
         if (actionData.success) setCommonAction(actionData);
+
       } catch (err) {
         setError(err.message);
       } finally {
@@ -119,31 +141,21 @@ function Explore() {
           alt="Move Logo" 
           className="w-24"
         />
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => setShowSearch(!showSearch)}
-            className="p-2 hover:bg-gray-700 rounded-full transition-colors"
-          >
-            {showSearch ? <FiX size={24} /> : <FiSearch size={24} />}
-          </button>
-          <DropdownMenu />
-        </div>
-      </div>
-
-      {/* Animated Search Bar */}
-      <div className={`overflow-hidden transition-all duration-300 ${showSearch ? "max-h-20 opacity-100 mt-4" : "max-h-0 opacity-0"}`}>
-        <div className="mb-4 px-4">
-          <input
-            type="text"
-            placeholder="Search itineraries..."
-            className="w-full p-2 rounded bg-gray-700 text-white placeholder-gray-400"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
+        <DropdownMenu />
       </div>
 
       <h1 className="text-2xl font-light mb-4">Explore</h1>
+
+      {/* Search Bar for Itineraries */}
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Search itineraries by name..."
+          className="w-full p-2 rounded bg-gray-700 text-white placeholder-gray-400"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
 
       {/* Location Search and Recommendation Section */}
       <div className="mb-8 space-y-4">
@@ -229,24 +241,24 @@ function Explore() {
 
       {/* Itinerary Grid with Search Results */}
       <div className="flex flex-wrap justify-center gap-4">
-        {filteredItineraries.length > 0 ? (
-          filteredItineraries.map((item) => (
-            <ItineraryBox
-              key={item._id}
-              id={item.id}
-              image={placeHolder.image}
-              title={item.itinerary_name}
-              avatar={placeHolder.avatar}
-            />
-          ))
-        ) : (
-          <div className="text-gray-400 text-center w-full mt-8">
-            {searchQuery ? 
-              `No itineraries found matching "${searchQuery}"` : 
-              "No itineraries available"
-            }
-          </div>
-        )}
+      {filteredItineraries.length > 0 ? (
+  filteredItineraries.map((item) => (
+    <ItineraryBox
+      key={item.id}  // Use item.id instead of item.user_id
+      id={item.id}   // Pass the string ID
+      image={getItineraryImage(item)}
+      title={item.itinerary_name}
+      avatar={placeHolder.avatar}
+    />
+  ))
+) : (
+      <div className="text-gray-400 text-center w-full mt-8">
+        {searchQuery ? 
+          `No itineraries found matching "${searchQuery}"` : 
+          "No itineraries available"
+        }
+      </div>
+    )}
       </div>
     </div>
   );
