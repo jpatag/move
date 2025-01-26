@@ -1,10 +1,11 @@
 import logging
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from datetime import datetime
 import os
 from dotenv import load_dotenv
+import re
 
 # Load environment variables from .env file
 load_dotenv()
@@ -225,6 +226,28 @@ def view_map_entries():
         flash(f'An error occurred: {e}', 'error')
         map_entries = []
     return render_template('view_map_entries.html', map_entries=map_entries)
+
+
+@app.route('/api/locations')
+def get_location_suggestions():
+    search_term = request.args.get('search', '').strip()
+    logger.debug(f"Search term received: '{search_term}'")
+    
+    try:
+        regex_pattern = f"^{re.escape(search_term)}"
+        logger.debug(f"Using regex pattern: {regex_pattern}")
+        
+        results = list(map_entries_collection.find(
+            {"location": {"$regex": regex_pattern, "$options": "i"}},
+            {"_id": 0, "location": 1, "address": 1}
+        ).limit(10))
+        
+        logger.debug(f"Found {len(results)} results")
+        return jsonify(results)
+    
+    except Exception as e:
+        logger.error(f"Error in get_location_suggestions: {e}")
+        return jsonify([])
 
 if __name__ == '__main__':
     app.run(debug=True)
