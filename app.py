@@ -1,11 +1,12 @@
 import json
 import logging
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from datetime import datetime
 import os
 from dotenv import load_dotenv
+import re
 from algo import (
     save_data,
     load_data,
@@ -202,14 +203,29 @@ def add_entry(itinerary_id):
 @app.route('/view_itineraries')
 def view_itineraries():
     try:
+        # Fetch itineraries from the database
         itineraries = list(itineraries_collection.find())
-        #logger.debug(f"Fetched {len(itineraries)} itineraries.")
+        logger.debug(f"Fetched {len(itineraries)} itineraries.")
+
+        # Convert date fields to datetime objects
+        for itinerary in itineraries:
+            for entry in itinerary.get('entries', []):
+                if isinstance(entry.get('time_start'), dict) and '$date' in entry['time_start']:
+                    entry['time_start'] = datetime.fromtimestamp(
+                        int(entry['time_start']['$date']['$numberLong']) / 1000
+                    )
+                if isinstance(entry.get('time_end'), dict) and '$date' in entry['time_end']:
+                    entry['time_end'] = datetime.fromtimestamp(
+                        int(entry['time_end']['$date']['$numberLong']) / 1000
+                    )
+     #logger.debug(f"Fetched {len(itineraries)} itineraries.")
     except Exception as e:
         #logger.error(f"Error fetching itineraries: {e}")
         flash(f'An error occurred: {e}', 'error')
         itineraries = []
-    return render_template('view_itineraries.html', itineraries=itineraries)
 
+    # Render the template with processed itineraries
+    return render_template('view_itineraries.html', itineraries=itineraries)
 @app.route('/add_map_entry', methods=['GET', 'POST'])
 def add_map_entry():
     if request.method == 'POST':
@@ -259,6 +275,28 @@ def view_map_entries():
         flash(f'An error occurred: {e}', 'error')
         map_entries = []
     return render_template('view_map_entries.html', map_entries=map_entries)
+
+
+@app.route('/api/locations')
+def get_location_suggestions():
+    search_term = request.args.get('search', '').strip()
+    logger.debug(f"Search term received: '{search_term}'")
+    
+    try:
+        regex_pattern = f"^{re.escape(search_term)}"
+        logger.debug(f"Using regex pattern: {regex_pattern}")
+        
+        results = list(map_entries_collection.find(
+            {"location": {"$regex": regex_pattern, "$options": "i"}},
+            {"_id": 0, "location": 1, "address": 1}
+        ).limit(10))
+        
+        logger.debug(f"Found {len(results)} results")
+        return jsonify(results)
+    
+    except Exception as e:
+        logger.error(f"Error in get_location_suggestions: {e}")
+        return jsonify([])
 
 if __name__ == '__main__':
     app.run(debug=True)

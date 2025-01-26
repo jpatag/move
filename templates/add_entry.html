@@ -8,7 +8,7 @@
 <body>
     <h1>Add Entry to Itinerary: "{{ itinerary.itinerary_name }}"</h1>
 
-    <!-- Display Flash Messages -->
+    <!-- Flash Messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         <ul class="flashes">
@@ -21,7 +21,12 @@
 
     <form action="{{ url_for('add_entry', itinerary_id=itinerary._id|string) }}" method="POST">
         <label for="location_name">Location Name:</label>
-        <input type="text" id="location_name" name="location_name" placeholder="Enter location name" required>
+        <input type="text" id="location_name" name="location_name" 
+       list="locationSuggestions" placeholder="Start typing location..."
+       autocomplete="off" required>
+<datalist id="locationSuggestions">
+    <!-- Options will be populated dynamically -->
+</datalist>
 
         <label for="address">Address:</label>
         <input type="text" id="address" name="address" placeholder="Enter address" required>
@@ -39,5 +44,56 @@
     </form>
 
     <a href="{{ url_for('view_itineraries') }}">Back to Itineraries</a>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const locationInput = document.getElementById('location_name');
+            const addressInput = document.getElementById('address');
+            let timeoutId;
+        
+            async function fetchSuggestions(searchTerm) {
+                try {
+                    const response = await fetch(`/api/locations?search=${encodeURIComponent(searchTerm)}`);
+                    const suggestions = await response.json();
+                    return suggestions;
+                } catch (error) {
+                    console.error('Error fetching suggestions:', error);
+                    return [];
+                }
+            }
+        
+            function updateAddress(suggestions, currentValue) {
+                const matchedLocation = suggestions.find(s => s.location === currentValue);
+                if (matchedLocation) {
+                    addressInput.value = matchedLocation.address;
+                } else {
+                    addressInput.value = '';
+                }
+            }
+        
+            locationInput.addEventListener('input', async (e) => {
+                const value = e.target.value.trim();
+                
+                // Clear previous timeout
+                if (timeoutId) clearTimeout(timeoutId);
+                
+                // Wait 300ms after typing stops
+                timeoutId = setTimeout(async () => {
+                    if (value.length >= 2) {
+                        const suggestions = await fetchSuggestions(value);
+                        
+                        // Update datalist
+                        const datalist = document.getElementById('locationSuggestions');
+                        datalist.innerHTML = suggestions
+                            .map(s => `<option value="${s.location}" data-address="${s.address}">`)
+                            .join('');
+                        
+                        // Update address if exact match
+                        updateAddress(suggestions, value);
+                    }
+                }, 300);
+            });
+        });
+        </script>
 </body>
 </html>
