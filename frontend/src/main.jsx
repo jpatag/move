@@ -7,6 +7,7 @@ import Explore from "./Explore.jsx";
 import ItineraryPage from "./ItineraryPage.jsx"; 
 import CreateItinerary from "./CreateItinerary";
 import AddEntry from "./AddEntry";
+import Account from "./Account";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -17,6 +18,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="/create" element={<CreateItinerary />} />
         <Route path="/itinerary/:id" element={<ItineraryPage />} />
         <Route path="/add-entry" element={<AddEntry />} />
+        <Route path="/account" element={<Account />} />
       </Routes>
     </Router>
   </StrictMode>
