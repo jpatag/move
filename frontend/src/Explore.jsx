@@ -82,12 +82,12 @@ function Explore() {
     <div className="min-h-screen bg-gray-800 text-white p-4">
       {/* Header */}
       <div className="flex justify-between items-center px-4">
-      <img 
-          src="https://i.ibb.co/Y2B1k9W/move-corner-logo.png" 
-          alt="Move Logo" 
-          className="w-24"
-        />
-      <DropdownMenu />
+        <img 
+            src="https://i.ibb.co/Y2B1k9W/move-corner-logo.png" 
+            alt="Move Logo" 
+            className="w-24"
+            />
+        <DropdownMenu />
       </div>
       <h1 className="text-2xl font-light">Explore</h1>
 
