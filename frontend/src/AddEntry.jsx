@@ -12,12 +12,29 @@ function AddEntry() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    // Simulating saving the new entry (you'd normally send it to a backend or global state)
-    console.log({ name, location, startTime, endTime, image, caption });
 
-    // Navigate back to the itinerary page after submission
-    navigate("/create-itinerary");
+    // Create a new entry object
+    const newEntry = {
+      id: Date.now(), // Unique ID
+      name,
+      location,
+      startTime,
+      endTime,
+      image,
+      caption,
+    };
+
+    // Retrieve existing entries from localStorage
+    const existingEntries = JSON.parse(localStorage.getItem("itineraryEntries")) || [];
+
+    // Add new entry to the existing list
+    const updatedEntries = [...existingEntries, newEntry];
+
+    // Save updated list to localStorage
+    localStorage.setItem("itineraryEntries", JSON.stringify(updatedEntries));
+
+    // Navigate back to the itinerary page
+    navigate("/create");
   };
 
   return (
