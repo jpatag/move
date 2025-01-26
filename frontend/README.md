@@ -6,6 +6,8 @@ npm install
 # then, do
 npm run dev
 # not npm run start, to start the frontend server
+# and open
+localhost:5173
 # if something fails try
 npm audit fix --force
 

@@ -9,7 +9,7 @@ function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-800 text-white">
+    <div className="flex items-center justify-center bg-gray-800 text-white">
       <div className="w-88 p-6 bg-gray-800 rounded-2xl text-center">
         
         {/* Logo */}
