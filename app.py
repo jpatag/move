@@ -14,7 +14,9 @@ from algo import (
     time_action_data,
     print_graph,
     find_good_next_location,
-    find_most_common_action_in_time_window
+    find_most_common_action_in_time_window,
+    connect_to_mongodb,
+    fetch_itineraries_from_mongodb
 )
 
 # Load environment variables from .env file
@@ -24,7 +26,7 @@ app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', 'default_secret_key')
 
 # Configure Logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.WARNING)
 #logger = logging.getLogger(__name__)
 
 # MongoDB configuration
@@ -34,8 +36,24 @@ db = client['places_db']
 itineraries_collection = db['itineraries']
 map_entries_collection = db['map_entries']
 
-#Initialize graph and time_action_data
+#Load Previous Data from MongoDB
 data_file_path = './data.json'
+collection = connect_to_mongodb(MONGO_URI, "places_db", "itineraries")
+if collection is not None:  # Explicit None check
+    itineraries = fetch_itineraries_from_mongodb(collection)
+    
+    # Load saved data if available
+    graph, time_action_data = load_data(data_file_path)
+
+    # Add itineraries to the graph one by one
+    for itinerary in itineraries:
+        add_itinerary_to_graph(itinerary, graph, time_action_data)
+
+    #Print the resulting graph
+    print_graph(graph)
+
+#Initialize graph and time_action_data
+save_data(graph, time_action_data, data_file_path)
 graph, time_action_data = load_data(data_file_path)
 
 @app.route('/')
@@ -165,6 +183,10 @@ def add_entry(itinerary_id):
                 save_data(graph, time_action_data, data_file_path)
                 #Print graph for debug
                 print_graph(graph)
+                #Suggest next place
+                find_good_next_location(graph, location_name)
+                #Find next place based on time
+                find_most_common_action_in_time_window(time_action_data, time_end_dt)
 
             else:
                 #logger.warning(f"No documents were modified when adding entry: {entry}")

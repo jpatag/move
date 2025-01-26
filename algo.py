@@ -10,7 +10,7 @@ from pymongo.errors import PyMongoError
 
 collection_name = "itineraries"
 db_name = "places_db"
-mongodb_uri = "mongodb+srv://admin:ifsballs@cluster0.5mgvl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+mongodb_uri = "mongodb+srv://adamlim123456:balls@cluster0.gup3b.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
 # Global graph to store locations and their weights
 graph = defaultdict(lambda: defaultdict(int))
@@ -110,6 +110,7 @@ def add_itinerary_to_graph(itinerary, graph, time_action_data):
 
             # 2. Skip dates before 1601 (Windows compatibility)
             if start_time.year < 1601:
+                print(location_name)
                 print(f"Skipping invalid date: {start_time}")
                 continue
 
@@ -129,24 +130,36 @@ def add_itinerary_to_graph(itinerary, graph, time_action_data):
         graph[current][next_location] += 1
 
 def find_most_common_action_in_time_window(time_action_data, query_time):
-    # Ensure query_time is UTC
-    if query_time.tzinfo is None:
-        query_time = query_time.replace(tzinfo=timezone.utc)
-    
-    window_start = query_time - timedelta(minutes=30)
-    window_end = query_time + timedelta(minutes=30)
-    
+    # Extract the time component (hours, minutes, seconds) from the query_time
+    query_time_only = query_time.time()
+
+    window_start = (datetime.combine(datetime.min, query_time_only) - timedelta(minutes=30)).time()
+    window_end = (datetime.combine(datetime.min, query_time_only) + timedelta(minutes=30)).time()
+
     action_counts = defaultdict(int)
+
     for recorded_time, actions in time_action_data.items():
-        if window_start <= recorded_time <= window_end:
-            for action, count in actions.items():
-                action_counts[action] += count
+        # Extract the time component of the recorded_time
+        recorded_time_only = recorded_time.time()
+
+    if window_start <= window_end:
+            # Case 1: Window does NOT cross midnight (e.g., 01:00 to 03:00)
+            if window_start <= recorded_time_only <= window_end:
+                for action, count in actions.items():
+                    action_counts[action] += count
+    else:
+            # Case 2: Window DOES cross midnight (e.g., 23:30 to 00:30)
+            if recorded_time_only >= window_start or recorded_time_only <= window_end:
+                for action, count in actions.items():
+                    action_counts[action] += count
 
     if action_counts:
         most_common_action = max(action_counts, key=action_counts.get)
-        print(f"Most common activity around {query_time.time()} is going to the '{most_common_action}' with weight {action_counts[most_common_action]}")
+        print(f"Most common activity around {query_time_only.strftime('%H:%M')} is going to '{most_common_action}' (count: {action_counts[most_common_action]})")
     else:
-        print(f"No popular action found around {query_time.time()}. Maybe time to go to bed?")
+        print(f"No popular action found around {query_time_only.strftime('%H:%M')}. Maybe go to bed?")
+
+
 
 def find_good_next_location(graph, start):
     """
@@ -202,73 +215,8 @@ def fetch_itineraries_from_mongodb(collection):
         print(f"Error fetching data from MongoDB: {e}")
         return []
 
-# Example itineraries
-itinerary1 = {
-    "_id": "1",
-    "user_id": "user1",
-    "name": "Vacation in Paris",
-    "entries": [
-        {
-            "location": {
-                "name": "Eiffel Tower",
-                "coordinates": {"lat": 48.858844, "lng": 2.294351}
-            },
-            "start_time": "2025-01-25T10:00:00Z",
-            "end_time": "2025-01-25T12:00:00Z",
-            "notes": "Take pictures at sunrise."
-        },
-        {
-            "location": {
-                "name": "Louvre Museum",
-                "coordinates": {"lat": 48.860611, "lng": 2.337644}
-            },
-            "start_time": "2025-01-25T13:00:00Z",
-            "end_time": "2025-01-25T16:00:00Z",
-            "notes": "Visit the Mona Lisa and other exhibits."
-        }
-    ],
-    "created_at": "2025-01-20T08:00:00Z",
-    "updated_at": "2025-01-23T18:00:00Z"
-}
-
-itinerary2 = {
-    "_id": "2",
-    "user_id": "user2",
-    "name": "Paris Highlights",
-    "entries": [
-        {
-            "location": {
-                "name": "Eiffel Tower",
-                "coordinates": {"lat": 48.858844, "lng": 2.294351}
-            },
-            "start_time": "2025-01-25T09:30:00Z",
-            "end_time": "2025-01-25T11:00:00Z",
-            "notes": "Morning view of Eiffel Tower."
-        },
-        {
-            "location": {
-                "name": "Louvre Museum",
-                "coordinates": {"lat": 48.860611, "lng": 2.337644}
-            },
-            "start_time": "2025-01-25T11:45:00Z",
-            "end_time": "2025-01-25T13:30:00Z",
-            "notes": "Short visit to Mona Lisa."
-        },
-        {
-            "location": {
-                "name": "Notre Dame Cathedral",
-                "coordinates": {"lat": 48.852968, "lng": 2.349902}
-            },
-            "start_time": "2025-01-25T14:00:00Z",
-            "end_time": "2025-01-25T15:30:00Z",
-            "notes": "Admire the architecture."
-        }
-    ],
-    "created_at": "2025-01-20T08:00:00Z",
-    "updated_at": "2025-01-23T18:00:00Z"
-}
 # Connect to MongoDB and fetch itineraries
-collection = connect_to_mongodb(mongodb_uri, db_name, collection_name)
+'''collection = connect_to_mongodb(mongodb_uri, db_name, collection_name)
 if collection is not None:  # Explicit None check
     itineraries = fetch_itineraries_from_mongodb(collection)
     
@@ -280,11 +228,11 @@ if collection is not None:  # Explicit None check
         add_itinerary_to_graph(itinerary, graph, time_action_data)
 
     # Print the resulting graph
-    print_graph(graph)
+    #print_graph(graph)
 
     # Test the "find_good_next_location" function
-    find_good_next_location(graph, "Eiffel Tower")
-    find_good_next_location(graph, "Bikini Beans Coffee")
+    #find_good_next_location(graph, "Eiffel Tower")
+    #find_good_next_location(graph, "Bikini Beans Coffee")
 
     # Test the "find_most_common_action_in_time_window" function
     query_time = datetime(2025, 1, 25, 10, 0, tzinfo=timezone.utc)
@@ -301,8 +249,7 @@ else:
 graph, time_action_data = load_data(file_path)
 
 # Add itineraries to the graph one by one
-add_itinerary_to_graph(itinerary1, graph, time_action_data)
-add_itinerary_to_graph(itinerary2, graph, time_action_data)
+
 
 # Print the resulting graph
 print_graph(graph)
@@ -313,11 +260,11 @@ find_good_next_location(graph,"Bikini Beans Coffee")
 
 
 # Test the "find_most_common_action_in_time_window" function
-query_time = datetime(2025, 1, 25, 10, 0, tzinfo=timezone.utc)  # 10:00 AM
+query_time = datetime(2025, 1, 1, 1, 52, tzinfo=timezone.utc)  # 10:00 AM
 find_most_common_action_in_time_window(time_action_data, query_time) #current_utc = datetime.now(timezone.utc)
 
 query_time = datetime(2025, 1, 25, 11, 30, tzinfo=timezone.utc)  # 11:30 AM
 find_most_common_action_in_time_window(time_action_data, query_time)
 
 # Save the data to the file
-save_data(graph, time_action_data, file_path)
+save_data(graph, time_action_data, file_path)'''
