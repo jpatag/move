@@ -1,12 +1,16 @@
 import json
 import logging
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
 from pymongo import MongoClient
-from bson.objectid import ObjectId
+from urllib.parse import quote_plus, urlencode
+from os import environ as env
+#from bson.objectid import ObjectId
 from datetime import datetime
 import os
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 import re
+from authlib.integrations.flask_client import OAuth
+
 from algo import (
     save_data,
     load_data,
@@ -57,9 +61,53 @@ if collection is not None:  # Explicit None check
 save_data(graph, time_action_data, data_file_path)
 graph, time_action_data = load_data(data_file_path)
 
-@app.route('/')
+#AuthO
+oauth = OAuth(app)
+oauth.register(
+    "auth0",
+    client_id=env.get("AUTH0_CLIENT_ID"),
+    client_secret=env.get("AUTH0_CLIENT_SECRET"),
+    client_kwargs={
+        "scope": "openid profile email",
+    },
+    server_metadata_url=f'https://{env.get("AUTH0_DOMAIN")}/.well-known/openid-configuration'
+)
+
+@app.route("/login")
+def login():
+    return oauth.auth0.authorize_redirect(
+        redirect_uri=url_for("callback", _external=True)
+    )
+
+@app.route("/callback", methods=["GET", "POST"])
+def callback():
+    token = oauth.auth0.authorize_access_token()
+    session["user"] = token
+    return redirect("/index")
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(
+        "https://" + env.get("AUTH0_DOMAIN")
+        + "/v2/logout?"
+        + urlencode(
+            {
+                "returnTo": url_for("home", _external=True),
+                "client_id": env.get("AUTH0_CLIENT_ID"),
+            },
+            quote_via=quote_plus,
+        )
+    )
+
+@app.route('/index')
 def index():
     return render_template('index.html')
+
+@app.route("/")
+def home():
+    return render_template("home.html", session=session.get('user'), pretty=json.dumps(session.get('user'), indent=4))
+
 
 @app.route('/add_itinerary', methods=['POST'])
 def add_itinerary():

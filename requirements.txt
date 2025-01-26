@@ -2,3 +2,6 @@ Flask==2.3.2
 pymongo==4.4.0
 dnspython==2.3.0
 python-dotenv==1.0.0
+requests>=2.27.1
+authlib>=1.0
+bson==0.5.10
