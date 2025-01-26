@@ -31,7 +31,6 @@
                             <tr>
                                 <th>Location Name</th>
                                 <th>Address</th>
-                                <th>Coordinates</th>
                                 <th>Time Start</th>
                                 <th>Time End</th>
                                 <th>Notes</th>
@@ -42,7 +41,6 @@
                             <tr>
                                 <td>{{ entry.location_name }}</td>
                                 <td>{{ entry.address }}</td>
-                                <td>{{ entry.coordinates.latitude }}, {{ entry.coordinates.longitude }}</td>
                                 <td>{{ entry.time_start.strftime('%Y-%m-%d %H:%M') }}</td>
                                 <td>{{ entry.time_end.strftime('%Y-%m-%d %H:%M') }}</td>
                                 <td>{{ entry.notes }}</td>
