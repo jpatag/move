@@ -171,8 +171,10 @@ def find_most_common_action_in_time_window(time_action_data, query_time):
 
     if action_counts:
         most_common_action = max(action_counts, key=action_counts.get)
+        return most_common_action
         print(f"Most common activity around {query_time_only.strftime('%H:%M')} is going to '{most_common_action}' (count: {action_counts[most_common_action]})")
     else:
+        return None
         print(f"No popular action found around {query_time_only.strftime('%H:%M')}. Maybe go to bed?")
 
 

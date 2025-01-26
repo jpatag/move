@@ -8,6 +8,7 @@ from datetime import datetime
 import os
 from dotenv import load_dotenv
 import re
+from datetime import datetime, timezone
 from algo import (
     save_data,
     load_data,
@@ -324,6 +325,55 @@ def get_single_itinerary(itinerary_id):
     except Exception as e:
         logger.error(f"Error processing itinerary: {str(e)}")
         return jsonify({"success": False, "error": "Internal server error"}), 500
+
+
+@app.route('/api/recommend-next', methods=['GET'])
+def recommend_next_location():
+    start = request.args.get('start')
+    if not start:
+        return jsonify({"success": False, "error": "Missing 'start' parameter"}), 400
+    
+    recommended = find_good_next_location(graph, start)
+    if recommended is not None:
+        return jsonify({
+            "success": True,
+            "data": {
+                "current_location": start,
+                "recommended_next_location": recommended
+            }
+        }), 200
+    else:
+        return jsonify({
+            "success": False,
+            "error": f"No recommendation found for '{start}' or it's a new trailblaze!"
+        }), 404
+
+@app.route('/api/common-action', methods=['GET'])
+def get_common_action():
+    time_str = request.args.get('time')
+    if not time_str:
+        return jsonify({"success": False, "error": "Missing 'time' parameter"}), 400
+    
+    try:
+        # Parse the input time string into a datetime object
+        query_time = datetime.now()
+    except ValueError as e:
+        return jsonify({"success": False, "error": f"Invalid time format: {e}. Use ISO format (e.g., '2023-10-10T14:30:00')"}), 400
+    
+    action = find_most_common_action_in_time_window(time_action_data, query_time)
+    if action:
+        return jsonify({
+            "success": True,
+            "data": {
+                "query_time": query_time.isoformat(),
+                "most_common_action": action
+            }
+        }), 200
+    else:
+        return jsonify({
+            "success": True,
+            "message": f"No popular action found around {query_time.time().strftime('%H:%M')}. Maybe go to bed?"
+        }), 200
 
 if __name__ == '__main__':
     app.run(debug=True)
