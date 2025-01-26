@@ -6,6 +6,7 @@ import App from "./App.jsx";
 import Explore from "./Explore.jsx";
 import ItineraryPage from "./ItineraryPage.jsx"; 
 import CreateItinerary from "./CreateItinerary";
+import AddEntry from "./AddEntry";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -15,6 +16,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="/explore" element={<Explore />} />
         <Route path="/create" element={<CreateItinerary />} />
         <Route path="/itinerary/:id" element={<ItineraryPage />} />
+        <Route path="/add-entry" element={<AddEntry />} />
       </Routes>
     </Router>
   </StrictMode>
