@@ -2,7 +2,7 @@ import React from "react";
 
 const Entry = ({ title, address, startTime, endTime, caption, image }) => {
   return (
-    <div className="flex bg-gray-700 rounded-lg shadow-lg w-full">
+    <div className="flex bg-gray-700 rounded-lg shadow-lg w-full animate-fadeIn">
       {/* Left Side - Text Content */}
       <div className="flex-1 m-4">
         <h2 className="text-lg font-bold text-white">{title}</h2>

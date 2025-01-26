@@ -60,7 +60,7 @@ function CreateItinerary() {
       </div>
 
       {/* Entries List */}
-      <div className="mt-4 sm:min-w-150">
+      <div className="mt-4 sm:min-w-130">
         {entries.map((entry) => (
           <Entry
             key={entry.id}

@@ -52,7 +52,7 @@ const ItineraryPage = () => {
         </div>
 
         {/* Itinerary Entries */}
-        <div className="mt-6 space-y-4 sm:min-w-150">
+        <div className="mt-6 space-y-4 sm:min-w-130">
             {dummyEntries.map((entry) => (
             <Entry
                 key={entry.id}
