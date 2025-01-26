@@ -154,15 +154,28 @@ def add_entry(itinerary_id):
 @app.route('/view_itineraries')
 def view_itineraries():
     try:
+        # Fetch itineraries from the database
         itineraries = list(itineraries_collection.find())
         logger.debug(f"Fetched {len(itineraries)} itineraries.")
+
+        # Convert date fields to datetime objects
+        for itinerary in itineraries:
+            for entry in itinerary.get('entries', []):
+                if isinstance(entry.get('time_start'), dict) and '$date' in entry['time_start']:
+                    entry['time_start'] = datetime.fromtimestamp(
+                        int(entry['time_start']['$date']['$numberLong']) / 1000
+                    )
+                if isinstance(entry.get('time_end'), dict) and '$date' in entry['time_end']:
+                    entry['time_end'] = datetime.fromtimestamp(
+                        int(entry['time_end']['$date']['$numberLong']) / 1000
+                    )
     except Exception as e:
         logger.error(f"Error fetching itineraries: {e}")
         flash(f'An error occurred: {e}', 'error')
         itineraries = []
-    return render_template('view_itineraries.html', itineraries=itineraries)
 
-@app.route('/add_map_entry', methods=['GET', 'POST'])
+    # Render the template with processed itineraries
+    return render_template('view_itineraries.html', itineraries=itineraries)
 def add_map_entry():
     if request.method == 'POST':
         location = request.form.get('location')
