@@ -1,0 +1,30 @@
+{
+    "graph": {
+        "Eiffel Tower": {
+            "Louvre Museum": 4
+        },
+        "Louvre Museum": {
+            "Notre Dame Cathedral": 2
+        }
+    },
+    "time_action_data": {
+        "2025-01-25T10:00:00+00:00": {
+            "Eiffel Tower": 2
+        },
+        "2025-01-25T13:00:00+00:00": {
+            "Louvre Museum": 2
+        },
+        "2025-01-25T09:30:00+00:00": {
+            "Eiffel Tower": 2
+        },
+        "2025-01-25T11:45:00+00:00": {
+            "Louvre Museum": 2
+        },
+        "2025-01-25T14:00:00+00:00": {
+            "Notre Dame Cathedral": 2
+        },
+        "2025-01-02T20:42:00+00:00": {
+            "1": 3
+        }
+    }
+}
