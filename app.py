@@ -84,8 +84,6 @@ def add_entry(itinerary_id):
         # Extract form data
         location_name = request.form.get('location_name')
         address = request.form.get('address')  # New address field
-        latitude = request.form.get('latitude')
-        longitude = request.form.get('longitude')
         time_start = request.form.get('time_start')
         time_end = request.form.get('time_end')
         notes = request.form.get('notes')
@@ -93,14 +91,12 @@ def add_entry(itinerary_id):
         logger.debug("Form data received:")
         logger.debug(f"location_name: {location_name}")
         logger.debug(f"address: {address}")
-        logger.debug(f"latitude: {latitude}")
-        logger.debug(f"longitude: {longitude}")
         logger.debug(f"time_start: {time_start}")
         logger.debug(f"time_end: {time_end}")
         logger.debug(f"notes: {notes}")
 
         # Validate inputs
-        if not all([location_name, address, latitude, longitude, time_start, time_end]):
+        if not all([location_name, address, time_start, time_end]):
             flash('All fields except notes are required!', 'error')
             logger.warning("Form submission missing required fields.")
             return redirect(url_for('add_entry', itinerary_id=itinerary_id))
@@ -125,10 +121,6 @@ def add_entry(itinerary_id):
             entry = {
                 'location_name': location_name,
                 'address': address,  # Include address
-                'coordinates': {
-                    'latitude': float(latitude),
-                    'longitude': float(longitude)
-                },
                 'time_start': time_start_dt,
                 'time_end': time_end_dt,
                 'notes': notes
