@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>View Entries</title>
+    <title>All Map Entries</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>All Entries</h1>
+    <h1>All Map Entries</h1>
 
     <!-- Display Flash Messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -19,31 +19,32 @@
       {% endif %}
     {% endwith %}
 
-    {% if entries %}
+    {% if map_entries %}
         <table>
             <thead>
                 <tr>
-                    <th>Place Name</th>
-                    <th>Location</th>
-                    <th>Time Begin</th>
-                    <th>Time End</th>
+                    <th>Location Name</th>
+                    <th>Address</th>
+                    <th>Latitude</th>
+                    <th>Longitude</th>
                 </tr>
             </thead>
             <tbody>
-                {% for entry in entries %}
+                {% for entry in map_entries %}
                 <tr>
-                    <td>{{ entry.place_name }}</td>
                     <td>{{ entry.location }}</td>
-                    <td>{{ entry.time_begin.strftime('%Y-%m-%d %H:%M') }}</td>
-                    <td>{{ entry.time_end.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>{{ entry.address }}</td>
+                    <td>{{ entry.coordinates.latitude }}</td>
+                    <td>{{ entry.coordinates.longitude }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     {% else %}
-        <p>No entries found.</p>
+        <p>No map entries found.</p>
     {% endif %}
 
-    <a href="{{ url_for('index') }}">Add New Entry</a>
+    <a href="{{ url_for('add_map_entry') }}">Add New Map Entry</a> | 
+    <a href="{{ url_for('index') }}">Add New Itinerary</a>
 </body>
 </html>

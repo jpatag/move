@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>All Itineraries</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>All Itineraries</h1>
+
+    <!-- Display Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="flashes">
+        {% for category, message in messages %}
+          <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    {% if itineraries %}
+        {% for itinerary in itineraries %}
+            <div class="itinerary">
+                <h2>{{ itinerary.itinerary_name }}</h2>
+                <p><strong>User ID:</strong> {{ itinerary.user_id }}</p>
+                <a href="{{ url_for('add_entry', itinerary_id=itinerary._id) }}">Add Entry</a>
+                {% if itinerary.entries %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Location Name</th>
+                                <th>Address</th>
+                                <th>Coordinates</th>
+                                <th>Time Start</th>
+                                <th>Time End</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for entry in itinerary.entries %}
+                            <tr>
+                                <td>{{ entry.location_name }}</td>
+                                <td>{{ entry.address }}</td>
+                                <td>{{ entry.coordinates.latitude }}, {{ entry.coordinates.longitude }}</td>
+                                <td>{{ entry.time_start.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td>{{ entry.time_end.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td>{{ entry.notes }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p>No entries found for this itinerary.</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No itineraries found.</p>
+    {% endif %}
+
+    <a href="{{ url_for('index') }}">Add New Itinerary</a>
+</body>
+</html>

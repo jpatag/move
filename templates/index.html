@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Add New Entry</title>
+    <title>Add New Itinerary</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Add New Entry</h1>
+    <h1>Add New Itinerary</h1>
 
     <!-- Display Flash Messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -19,22 +19,18 @@
       {% endif %}
     {% endwith %}
 
-    <form action="{{ url_for('add_entry') }}" method="POST">
-        <label for="time_begin">Time Begin:</label>
-        <input type="datetime-local" id="time_begin" name="time_begin" required>
+    <form action="{{ url_for('add_itinerary') }}" method="POST">
+        <label for="itinerary_name">Itinerary Name:</label>
+        <input type="text" id="itinerary_name" name="itinerary_name" placeholder="Enter itinerary name" required>
 
-        <label for="time_end">Time End:</label>
-        <input type="datetime-local" id="time_end" name="time_end" required>
+        <label for="user_id">User ID:</label>
+        <input type="text" id="user_id" name="user_id" placeholder="Enter user ID" required>
 
-        <label for="place_name">Place Name:</label>
-        <input type="text" id="place_name" name="place_name" placeholder="Enter place name" required>
-
-        <label for="location">Location:</label>
-        <input type="text" id="location" name="location" placeholder="Enter location" required>
-
-        <button type="submit">Add Entry</button>
+        <button type="submit">Add Itinerary</button>
     </form>
 
-    <a href="{{ url_for('view_entries') }}">View All Entries</a>
+    <a href="{{ url_for('view_itineraries') }}">View All Itineraries</a> | 
+    <a href="{{ url_for('add_map_entry') }}">Add Map Entry</a> | 
+    <a href="{{ url_for('view_map_entries') }}">View Map Entries</a>
 </body>
 </html>
