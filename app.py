@@ -176,6 +176,7 @@ def view_itineraries():
 
     # Render the template with processed itineraries
     return render_template('view_itineraries.html', itineraries=itineraries)
+@app.route('/add_map_entry', methods=['GET', 'POST'])
 def add_map_entry():
     if request.method == 'POST':
         location = request.form.get('location')
